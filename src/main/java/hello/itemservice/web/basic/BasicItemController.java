@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -85,13 +86,21 @@ public class BasicItemController {
     }
 
 
-    @PostMapping("/add")
+    //@PostMapping("/add")
     public String addItemV5(Item item){
 
         //@ModelAttribute Item item 에서 Item의 첫글자만 소문자로 바껴서 addAttribute에 담긴다.
         //@ModelAttribute 까지 생략할 수 있다.
         itemRepository.save(item);
         return "redirect:/basic/items/" + item.getId(); //URL에 변수를 더해서 사용하는 것은 URL 인코딩이 안되기 때문에 위험
+    }
+
+    @PostMapping("/add")
+    public String addItemV6(Item item, RedirectAttributes redirectAttributes){
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId",savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/basic/items/{itemId}"; //URL에 변수를 더해서 사용하는 것은 URL 인코딩이 안되기 때문에 위험
     }
 
     @GetMapping("/{itemId}/edit")
